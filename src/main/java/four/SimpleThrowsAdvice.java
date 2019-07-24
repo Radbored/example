@@ -1,0 +1,33 @@
+package four;
+
+import org.springframework.aop.ThrowsAdvice;
+import org.springframework.aop.framework.ProxyFactory;
+import two.SimpleBeforeAdvice;
+
+import java.lang.reflect.Method;
+
+public class SimpleThrowsAdvice implements ThrowsAdvice {
+    public static void main(String... args)throws Exception{
+        ErrorBean errorBean = new ErrorBean();
+        ProxyFactory pf = new ProxyFactory();
+        pf.setTarget(errorBean);
+        pf.addAdvice(new SimpleThrowsAdvice());
+        ErrorBean proxy =(ErrorBean)pf.getProxy();
+        try {
+            proxy.errorPhoneMethod();
+        }catch (Exception ignored){}
+
+    }
+    public void afterThrowing(Exception ex)throws Throwable{
+        System.out.println("***");
+        System.out.println("Generic Exception Capture");
+        System.out.println("Caught: "+ex.getClass().getName());
+        System.out.println("***\n");
+    }
+    public void afterThrowing(Method method,Object[] args,Object target,IllegalAccessException ex)throws Throwable{
+        System.out.println("***");
+        System.out.println("IllegalArgumentException Capture");
+        System.out.println("Capture"+ex.getClass().getName());
+        System.out.println("***\n");
+    }
+}
